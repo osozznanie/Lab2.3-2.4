@@ -1,0 +1,165 @@
+using System;
+
+public class Shapes
+{
+    public virtual int CalculateArea()
+    {
+        return 0;
+    }
+
+    public virtual int CalculatePerimeter()
+    {
+        return 0;
+    }
+}
+
+public class Trapezoids : Shapes
+{
+    private int[] vertexCoordinates = new int[8];
+
+    public Trapezoids(int[] coordinates)
+    {
+        vertexCoordinates = coordinates;
+    }
+
+    public override int CalculateArea()
+    {
+        int a = Math.Abs(vertexCoordinates[0] - vertexCoordinates[2]);
+        int b = Math.Abs(vertexCoordinates[1] - vertexCoordinates[3]);
+        int c = Math.Abs(vertexCoordinates[4] - vertexCoordinates[6]);
+        int d = Math.Abs(vertexCoordinates[5] - vertexCoordinates[7]);
+        int height = Math.Abs(vertexCoordinates[1] - vertexCoordinates[5]);
+        int area = (a + c) * height / 2;
+        return area;
+    }
+
+    public override int CalculatePerimeter()
+    {
+        double a = Math.Sqrt(Math.Pow(vertexCoordinates[2] - vertexCoordinates[0], 2) + Math.Pow(vertexCoordinates[3] - vertexCoordinates[1], 2));
+        double b = Math.Sqrt(Math.Pow(vertexCoordinates[4] - vertexCoordinates[2], 2) + Math.Pow(vertexCoordinates[5] - vertexCoordinates[3], 2));
+        double c = Math.Sqrt(Math.Pow(vertexCoordinates[6] - vertexCoordinates[4], 2) + Math.Pow(vertexCoordinates[7] - vertexCoordinates[5], 2));
+        double d = Math.Sqrt(Math.Pow(vertexCoordinates[0] - vertexCoordinates[6], 2) + Math.Pow(vertexCoordinates[1] - vertexCoordinates[7], 2));
+        double perimeter = a + b + c + d;
+        return (int)perimeter;
+    }
+
+    public bool IsTrapezoid(int[] coordinates)
+    {
+        // Check if opposite sides are parallel
+        bool sidesParallel = ((coordinates[3] - coordinates[1]) * (coordinates[6] - coordinates[4])) == ((coordinates[7] - coordinates[5]) * (coordinates[2] - coordinates[0]));
+
+        // Check if adjacent sides have different slopes
+        bool sidesDifferent = ((coordinates[3] - coordinates[1]) * (coordinates[2] - coordinates[0])) != ((coordinates[5] - coordinates[3]) * (coordinates[2] - coordinates[0])) && ((coordinates[3] - coordinates[1]) * (coordinates[2] - coordinates[0])) != ((coordinates[7] - coordinates[5]) * (coordinates[4] - coordinates[2]));
+
+        // If both conditions are true, it's a trapezoid
+        return sidesParallel;
+    }
+    public override string ToString()
+    {
+        return $"Trapezoid: Coordinates=[{vertexCoordinates[0]},{vertexCoordinates[1]}], [{vertexCoordinates[2]},{vertexCoordinates[3]}], [{vertexCoordinates[4]},{vertexCoordinates[5]}], [{vertexCoordinates[6]},{vertexCoordinates[7]}]";
+    }
+}
+
+public class Circle : Shapes
+{
+    private int radius;
+
+    public Circle(int radius)
+    {
+        this.radius = radius;
+    }
+
+    public override int CalculateArea()
+    {
+        int area = (int)(Math.PI * radius * radius);
+        return area;
+    }
+
+    public override int CalculatePerimeter()
+    {
+        int perimeter =(int)(2 * Math.PI * radius);
+        return perimeter;
+    }
+    public int Radius
+    {
+        get { return radius; }
+        set { radius = value; }
+    }
+
+}
+
+public class Program
+{
+
+    static void Main(string[] args)
+    {
+        while (true)
+        {
+            Console.WriteLine("Yo, I'm ready to help you calculate the area and perimeter of a shape! " +
+                "\nLet me know what type of shape you're working with, and we'll get started. :)" +
+                "\n1 - Trapezoid" +
+                "\n2 - Circle");
+
+            string shapeType = Console.ReadLine();
+
+            if (shapeType == "1" || shapeType == "Trapezoid" || shapeType == "trapezoid")
+            {
+                Console.WriteLine("Hey, could you give me the coordinates of the trapezoid in this format instead? :) " +
+                         "\nx1,y1,x2,y2,x3,y3,x4,y4.");
+
+                Console.WriteLine("U can use correct coordinates to check"
+                    + "\nif u want press 1 and then enter or press 2 for enter your coordinates");
+                string correctCordinates = Console.ReadLine();
+                if (correctCordinates == "1")
+                {
+                    int[] correctCoordinates = new int[] { 0, 0, 5, 0, 3, 3, 2, 3 };
+                    Trapezoids trapezoid2 = new Trapezoids(correctCoordinates);
+                    Shapes correctShape = trapezoid2;
+                    Console.WriteLine(trapezoid2.ToString());
+                    Console.WriteLine("Area: {0}", correctShape.CalculateArea());
+                    Console.WriteLine("Perimeter: {0}", correctShape.CalculatePerimeter());
+                    Console.WriteLine("Is that valid trapezoid: {0}", trapezoid2.IsTrapezoid(correctCoordinates));
+                    Console.WriteLine("-------------------------");
+                    continue;
+                }
+                if (correctCordinates == "2")
+                {
+                    Console.WriteLine("Okay, enter your coordinates");
+                    string coordinatesInput = Console.ReadLine();
+                    string[] coordinatesArray = coordinatesInput.Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    int[] coordinates = Array.ConvertAll(coordinatesArray, int.Parse);
+
+                    Trapezoids trapezoid = new Trapezoids(coordinates);
+                    Shapes shape = trapezoid;
+                    Console.WriteLine(trapezoid.ToString());
+                    Console.WriteLine("Area: {0}", shape.CalculateArea());
+                    Console.WriteLine("Perimeter: {0}", shape.CalculatePerimeter());
+                    Console.WriteLine("Is that valid trapezoid: {0}", trapezoid.IsTrapezoid(coordinates));
+                    Console.WriteLine("-------------------------");
+                    continue;
+                }
+                    
+            }
+            else if (shapeType == "2" || shapeType == "Circle" || shapeType == "circle")
+            {
+                Console.WriteLine("What's the radius of the circle? Let me know! :");
+                int radius = int.Parse(Console.ReadLine());
+
+                Circle circle = new Circle(radius);
+                Shapes shape = circle;
+                Console.WriteLine("Circle radius: {0}", circle.Radius);
+                Console.WriteLine("Area: {0}", shape.CalculateArea());
+                Console.WriteLine("Perimeter: {0}", shape.CalculatePerimeter());
+                Console.WriteLine("-------------------------");
+                continue;
+            }
+            else
+            {
+                Console.WriteLine("Oopsie! That's an invalid shape type. Please choose one of the following options: 'trapezoid', 'circle', '1', or '2'. Let's try this again with the right shape type, yeah? :)");
+                Console.WriteLine("-------------------------");
+                continue;
+            }
+        }
+
+    }
+}
